@@ -5,6 +5,12 @@ import { routes } from "./routes.js"
 const app = http.createServer((request, response) => {
   const { method, url } = request
 
+  const route = routes.find(route => route.method === method && route.path === url)
+
+  if (route) {
+    return route.handler(request, response)
+  }
+
   return response.writeHead(404).end("Not found")
 })
 
