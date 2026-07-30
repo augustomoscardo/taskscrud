@@ -16,10 +16,13 @@ export class Database {
   }
 
   select(table, search) {
-
+    let data = this.#database[table] ?? []
   }
 
-  insert(table) { }
+  insert(table, data) {
+    this.#database[table].push(data)
+    this.#persist()
+  }
 
   update(table) { }
 
