@@ -6,7 +6,7 @@ export async function json(request, response) {
   }
 
   try {
-    request.body = JSON.parse(buffers.concat(buffers).toString())
+    request.body = JSON.parse(Buffer.concat(buffers).toString())
   } catch {
     request.body = null
   }

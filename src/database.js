@@ -4,12 +4,12 @@ const databasePath = new URL("../db.json", import.meta.url)
 
 export class Database {
   constructor() {
-    fs.readFile(databasePath, "utf8")
+    fs.readFile(databasePath, "utf-8")
       .then(data => this.#database = JSON.parse(data))
       .catch(() => this.#persist())
   }
 
-  #database = []
+  #database = {}
 
   #persist() {
     fs.writeFile(databasePath, JSON.stringify(this.#database))
@@ -17,11 +17,20 @@ export class Database {
 
   select(table, search) {
     let data = this.#database[table] ?? []
+
+    return data
   }
 
   insert(table, data) {
-    this.#database[table].push(data)
+    if (Array.isArray(this.#database[table])) {
+      this.#database[table].push(data)
+    } else {
+      this.#database[table] = [data]
+    }
+
     this.#persist()
+
+    return data
   }
 
   update(table) { }

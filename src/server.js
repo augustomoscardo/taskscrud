@@ -3,14 +3,22 @@ import { routes } from "./routes.js"
 import { json } from "./middlewares/json.js"
 
 
-const app = http.createServer((request, response) => {
+const app = http.createServer(async (request, response) => {
   const { method, url } = request
-
+  
   await json(request, response)
 
-  const route = routes.find(route => route.method === method && route.path === url)
+  const route = routes.find(route => route.method === method && route.path.test(url))
 
   if (route) {
+    const routeParams = request.url.match(route.path)
+
+    const { query, ...params } = routeParams.groups
+
+    request.params = {...routeParams.groups}
+
+    request.query = query ? extractQueryParams(query) : {}
+
     return route.handler(request, response)
   }
 
