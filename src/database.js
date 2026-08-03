@@ -33,7 +33,55 @@ export class Database {
     return data
   }
 
-  update(table) { }
+  update(table, id, data) { 
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
-  delete(table) { }
+    const { title, description } = data
+
+    if (rowIndex > -1) {
+      this.#database[table][rowIndex] = {
+        ...this.#database[table][rowIndex],
+        title: title ?? this.#database[table][rowIndex].title,
+        description: description ?? this.#database[table][rowIndex].description,
+        updatedAt: new Date()
+      }
+
+      this.#persist()
+
+      return true
+    }
+
+    return false
+  }
+
+  complete(table, id) {
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+    if (rowIndex > -1) {
+      this.#database[table][rowIndex] = {
+        ...this.#database[table][rowIndex],
+        completedAt: new Date(),
+      }
+      
+      this.#persist()
+
+      return true
+    }
+
+    return false
+  }
+
+  delete(table, id) { 
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+    if (rowIndex > -1) {
+      this.#database[table].splice(rowIndex, 1)
+
+      this.#persist()
+
+      return true
+    }
+
+    return false
+  }
 }
