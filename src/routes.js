@@ -11,8 +11,13 @@ export const routes = [
     path: buildRoutePaths("/tasks"),
     handler: (request, response) => {
       const { search } = request.query
+      console.log(search);
+      
 
-      let tasks = database.select("tasks", search ? {} : null)
+      let tasks = database.select("tasks", search ? {
+        title: search,
+        description: search
+      } : null)
 
       return response.writeHead(200).end(JSON.stringify(tasks))
     }
