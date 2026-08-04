@@ -1,0 +1,30 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      csv-generate:
+        specifier: ^4.6.1
+        version: 4.6.1
+      csv-parse:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+packages:
+
+  csv-generate@4.6.1:
+    resolution: {integrity: sha512-eELl9K716LSSeP2/YcCjch525JztnnERe3jEARWw2v1FN9ukUYfZTNYZ4Rq2Jj/MFKMauffOy9VCaqQTpFThDQ==}
+
+  csv-parse@7.0.2:
+    resolution: {integrity: sha512-uKZghv9UmPkMVLYy//KZ9HFAIJsl7wkhoEdIL0+rhuSY9pZQlhaeGEDPIe+/w7eh81MOql8Q/9+inAGWG6ZHYA==}
+
+snapshots:
+
+  csv-generate@4.6.1: {}
+
+  csv-parse@7.0.2: {}
