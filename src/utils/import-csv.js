@@ -1,46 +1,69 @@
 import { Readable, Transform } from "node:stream"
-import fs from "node:fs/promises"
+import fs from "node:fs"
 
 import { parse } from "csv-parse"
 import { generate } from "csv-generate"
 
-const csvCotent = (async () => {
-  // Initialise the parser by generating random records
-  const parser = generate({
+
+// Create CSV file with 25 records
+async function generateCsv() {
+  const file = await fs.createWriteStream("tasks.csv")
+  file.write("title, description\n")
+
+  let count = 0
+
+  const records = generate({
     columns: 2,
     length: 25,
-    seed: 5
-  }).pipe(parse());
+  }).pipe(parse())
+  
 
-  // Initialise count
-  let count = 0;
-  // Report start
-  const csvHeader = "title, description"
-  // process.stdout.write(`${csvHeader}\n`);
-
-  let csv = ["title, description"]
-
-  // Iterate through each records
-  for await (const record of parser) {
+  for await (const record of records) {
     count++
-    
-    let [title, description] = record
-    title = `Nova tarefa ${count}`
-    description = `Descrição da tarefa ${count}`
 
-    csv = [...csv, `${title}, ${description}`]
-    
+    const title = `Nova tarefa ${count}`
+    const description = `Descrição da tarefa ${count}`
+
+    file.write(`${title}, ${description}\n`)
+  }
+
+  file.end()
+}
+
+async function importTasksFromCsv() {
+  const fileStream = await fs.createReadStream("tasks.csv")
+  const parser = fileStream.pipe(parse({
+    from_line:2
+  }))
+  
+  for await (const record of parser) {
+    const [title, description] = record
+
     await fetch("http://localhost:3333/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        title,
-        description
-      })
+      body: JSON.stringify({ title, description })
     })
   }
-  // Report end
-  // process.stdout.write("...done\n");
-})();
+  
+}
+
+await generateCsv()
+  .then(() => {
+    console.log("CSV generated successfully")
+  })
+  .catch((err) => {
+    console.error(err)
+  })
+
+
+
+await importTasksFromCsv()
+  .then(() => {
+    console.log("Tasks imported successfully")
+  })
+  .catch((err) => {
+  console.error(err)
+})
